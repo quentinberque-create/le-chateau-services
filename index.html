@@ -142,8 +142,6 @@
       <div class="divider"></div>
       <div class="filter-grid">
         <div class="filter-btn sel" data-service="lavage" onclick="selectService('lavage')"><div class="filter-icon fi-wash">🚗</div><div><div class="filter-text" id="t-wash">Car Wash</div><div class="filter-sub" id="t-wash-sub">Exterior / interior</div></div></div>
-        <div class="filter-btn" data-service="aeroport" onclick="selectService('aeroport')"><div class="filter-icon fi-plane">✈️</div><div><div class="filter-text" id="t-airport">Airport Transport</div><div class="filter-sub" id="t-airport-sub">Drop-off / pick-up</div></div></div>
-        <div class="filter-btn" data-service="rdv" onclick="selectService('rdv')"><div class="filter-icon fi-rdv">📍</div><div><div class="filter-text" id="t-rdv">Appointment Transport</div><div class="filter-sub" id="t-rdv-sub">General ride</div></div></div>
         <div class="filter-btn" data-service="autres" onclick="selectService('autres')"><div class="filter-icon fi-other">⚡</div><div><div class="filter-text" id="t-other">Other Services</div><div class="filter-sub" id="t-other-sub">Any other request</div></div></div>
       </div>
     </div>
@@ -164,31 +162,7 @@
         <div class="radio-option" onclick="selectRadio('rg-options',this)"><div class="radio-circle"></div><span class="radio-text" id="t-full">Full — Interior + Exterior</span></div>
       </div>
     </div>
-    <div class="section-card hidden" id="sec-aeroport">
-      <div class="section-header"><div class="section-icon fi-plane">✈️</div><div><p class="section-title" id="t-airport-title">Airport transport</p></div></div>
-      <p class="section-desc" id="t-airport-desc">Direction, date and time.</p>
-      <div class="divider"></div>
-      <div class="radio-group" id="rg-aeroport">
-        <div class="radio-option selected" onclick="selectRadio('rg-aeroport',this)"><div class="radio-circle"></div><span class="radio-text" id="t-dropoff">Drop-off (departure)</span></div>
-        <div class="radio-option" onclick="selectRadio('rg-aeroport',this)"><div class="radio-circle"></div><span class="radio-text" id="t-pickup">Pick-up (arrival)</span></div>
-      </div>
-      <div class="divider"></div>
-      <label class="field-label" id="t-date-label">Date <span class="req">*</span></label>
-      <input class="field-date" id="f-date-aeroport" type="date" />
-      <div class="divider"></div>
-      <label class="field-label" id="t-time-label">Preferred time</label>
-      <input class="field-input" id="f-heure-aeroport" type="text" placeholder="e.g. 6:00 AM" />
-    </div>
-    <div class="section-card hidden" id="sec-rdv">
-      <div class="section-header"><div class="section-icon fi-rdv">📍</div><div><p class="section-title" id="t-rdv-title">Appointment transport</p></div></div>
-      <p class="section-desc" id="t-rdv-desc">Date, time and destination.</p>
-      <div class="divider"></div>
-      <label class="field-label" id="t-rdv-date-label">Date <span class="req">*</span></label>
-      <input class="field-date" id="f-date-rdv" type="date" />
-      <div class="divider"></div>
-      <label class="field-label" id="t-rdv-time-label">Preferred time</label>
-      <input class="field-input" id="f-heure" type="text" placeholder="e.g. 10:00 AM" />
-    </div>
+
     <div class="section-card hidden" id="sec-autres">
       <div class="section-header"><div class="section-icon fi-other">⚡</div><div><p class="section-title" id="t-other-title">Other services</p></div></div>
       <p class="section-desc" id="t-other-desc">Describe your request.</p>
@@ -243,8 +217,7 @@
       appart:'Apartment number',appart_err:'This field is required.',appart_ph:'',
       email:'Email',email_err:'A valid email is required.',email_ph:'your@email.com',
       service_title:'What service do you need?',service_desc:'Select a category to continue.',
-      wash:'Car Wash',wash_sub:'Exterior / interior',airport:'Airport Transport',airport_sub:'Drop-off / pick-up',
-      rdv:'Appointment Transport',rdv_sub:'General ride',other:'Other Services',other_sub:'Any other request',
+      wash:'Car Wash',wash_sub:'Exterior / interior',other:'Other Services',other_sub:'Any other request',
       wash_title:'Car wash service',wash_desc:'Select your vehicle type and options.',
       vehicle_label:'Vehicle type',car:'Car',options_label:'Options',
       ext:'Exterior wash',int:'Interior cleaning',full:'Full — Interior + Exterior',
@@ -271,8 +244,7 @@
       appart:'Numéro d\'appartement',appart_err:'Ce champ est requis.',appart_ph:'',
       email:'Courriel',email_err:'Un courriel valide est requis.',email_ph:'votre@email.com',
       service_title:'Quel service souhaitez-vous ?',service_desc:'Sélectionnez une catégorie.',
-      wash:'Lavage auto',wash_sub:'Extérieur / intérieur',airport:'Transport aéroport',airport_sub:'Dépose / récupération',
-      rdv:'Transport rendez-vous',rdv_sub:'Course générale',other:'Autres services',other_sub:'Toute autre demande',
+      wash:'Lavage auto',wash_sub:'Extérieur / intérieur',other:'Autres services',other_sub:'Toute autre demande',
       wash_title:'Service de lavage',wash_desc:'Type de véhicule et options.',
       vehicle_label:'Type de véhicule',car:'Voiture',options_label:'Options',
       ext:'Lavage extérieur',int:'Nettoyage intérieur',full:'Complet — Intérieur + Extérieur',
@@ -307,17 +279,10 @@
     sh('t-appart-label',t.appart+' <span class="req">*</span>');sp('f-appart',t.appart_ph);s('err-appart',t.appart_err);
     sh('t-email-label',t.email);sp('f-email',t.email_ph);s('err-email',t.email_err);
     s('t-service-title',t.service_title);s('t-service-desc',t.service_desc);
-    s('t-wash',t.wash);s('t-wash-sub',t.wash_sub);s('t-airport',t.airport);s('t-airport-sub',t.airport_sub);
-    s('t-rdv',t.rdv);s('t-rdv-sub',t.rdv_sub);s('t-other',t.other);s('t-other-sub',t.other_sub);
+    s('t-wash',t.wash);s('t-wash-sub',t.wash_sub);s('t-other',t.other);s('t-other-sub',t.other_sub);
     s('t-wash-title',t.wash_title);s('t-wash-desc',t.wash_desc);
     s('t-vehicle-label',t.vehicle_label);s('t-car',t.car);s('t-options-label',t.options_label);
     s('t-ext',t.ext);s('t-int',t.int);s('t-full',t.full);
-    s('t-airport-title',t.airport_title);s('t-airport-desc',t.airport_desc);
-    s('t-dropoff',t.dropoff);s('t-pickup',t.pickup);s('t-roundtrip',t.roundtrip);
-    sh('t-date-label',t.date_label+' <span class="req">*</span>');s('t-time-label',t.time_label);sp('f-heure-aeroport',t.time_ph);
-    s('t-rdv-title',t.rdv_title);s('t-rdv-desc',t.rdv_desc);
-    sh('t-rdv-date-label',t.rdv_date+' <span class="req">*</span>');s('t-rdv-time-label',t.rdv_time);sp('f-heure',t.rdv_time_ph);
-    s('t-dest-label',t.dest);sp('f-destination',t.dest_ph);
     s('t-other-title',t.other_title);s('t-other-desc',t.other_desc);
     sh('t-other-date-label',t.other_date+' <span class="req">*</span>');s('t-desc-label',t.desc_label);sp('f-description',t.desc_ph);
     s('t-avail-title',t.avail_title);s('t-avail-desc',t.avail_desc);
@@ -348,7 +313,7 @@
     currentService=type;
     document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('sel');});
     document.querySelector('[data-service="'+type+'"]').classList.add('sel');
-    ['lavage','aeroport','rdv','autres'].forEach(function(s){document.getElementById('sec-'+s).classList.toggle('hidden',s!==type);});
+    ['lavage','autres'].forEach(function(s){document.getElementById('sec-'+s).classList.toggle('hidden',s!==type);});
     document.getElementById('dispo-lavage').classList.toggle('hidden',type!=='lavage');
     updateProgress(3);
   }
@@ -361,8 +326,8 @@
     el.classList.add('sel');
   }
   function clearForm(){
-    ['f-appart','f-email','f-heure-aeroport','f-heure','f-description'].forEach(function(id){document.getElementById(id).value='';});
-    ['f-date-aeroport','f-date-rdv','f-date-autres'].forEach(function(id){document.getElementById(id).value='';});
+    ['f-appart','f-email','f-description'].forEach(function(id){document.getElementById(id).value='';});
+    ['f-date-autres'].forEach(function(id){document.getElementById(id).value='';});
     document.querySelectorAll('#days-lavage .slot-btn').forEach(function(b){b.classList.remove('sel');});
     document.querySelectorAll('.field-error').forEach(function(e){e.classList.remove('show');});
     document.querySelectorAll('.field-input').forEach(function(i){i.classList.remove('input-error');});
@@ -408,11 +373,6 @@
       var dEl=document.querySelector('#days-lavage .slot-btn.sel');
       data.vehicle=vEl?vEl.textContent:'';data.options=oEl?oEl.textContent:'';
       data.preferred_day=dEl?dEl.textContent:'';data.time_slot='Morning (7 AM - 12 PM)';
-    } else if(currentService==='aeroport'){
-      var dirEl=document.querySelector('#rg-aeroport .radio-option.selected .radio-text');
-      data.direction=dirEl?dirEl.textContent:'';data.date=getText('f-date-aeroport');data.preferred_time=getText('f-heure-aeroport');
-    } else if(currentService==='rdv'){
-      data.date=getText('f-date-rdv');data.preferred_time=getText('f-heure');
     } else if(currentService==='autres'){
       data.date=getText('f-date-autres');data.description=getText('f-description');
     }
