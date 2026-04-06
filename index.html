@@ -132,6 +132,9 @@
       <input class="field-input" id="f-appart" type="text" placeholder="" oninput="onAppartInput()" />
       <div class="field-error" id="err-appart">This field is required.</div>
       <div class="divider"></div>
+      <label class="field-label" id="t-name-label">Full name</label>
+      <input class="field-input" id="f-name" type="text" placeholder="" />
+      <div class="divider"></div>
       <label class="field-label" id="t-email-label">Email</label>
       <input class="field-input" id="f-email" type="email" placeholder="your@email.com" />
       <div class="field-error" id="err-email">A valid email is required.</div>
@@ -234,7 +237,7 @@
       clear:'Clear form',submit:'Submit request →',
       success_title:'Request submitted!',success_msg:'Quentin will contact you shortly to confirm.',
       recap_title:'Your request',new_req:'New request',
-      r_apt:'Apartment',r_email:'Email',r_service:'Service',r_vehicle:'Vehicle',r_options:'Options',
+      r_apt:'Apartment',r_name:'Name',r_email:'Email',r_service:'Service',r_vehicle:'Vehicle',r_options:'Options',
       r_day:'Day',r_slot:'Time slot',r_direction:'Direction',r_date:'Date',
       r_time:'Time',r_dest:'Destination',r_desc:'Description'
     },
@@ -261,7 +264,7 @@
       clear:'Effacer',submit:'Envoyer la demande →',
       success_title:'Demande envoyée !',success_msg:'Quentin vous contactera sous peu pour confirmer.',
       recap_title:'Votre demande',new_req:'Nouvelle demande',
-      r_apt:'Appartement',r_email:'Courriel',r_service:'Service',r_vehicle:'Véhicule',r_options:'Options',
+      r_apt:'Appartement',r_name:'Nom',r_email:'Courriel',r_service:'Service',r_vehicle:'Véhicule',r_options:'Options',
       r_day:'Jour',r_slot:'Créneau',r_direction:'Direction',r_date:'Date',
       r_time:'Heure',r_dest:'Destination',r_desc:'Description'
     }
@@ -279,7 +282,7 @@
     sh('t-appart-label',t.appart+' <span class="req">*</span>');sp('f-appart',t.appart_ph);s('err-appart',t.appart_err);
     sh('t-email-label',t.email);sp('f-email',t.email_ph);s('err-email',t.email_err);
     s('t-service-title',t.service_title);s('t-service-desc',t.service_desc);
-    s('t-wash',t.wash);s('t-wash-sub',t.wash_sub);s('t-other',t.other);s('t-other-sub',t.other_sub);
+    s('t-name-label',currentLang==='fr'?'Nom complet':'Full name');s('t-other',t.other);s('t-other-sub',t.other_sub);
     s('t-wash-title',t.wash_title);s('t-wash-desc',t.wash_desc);
     s('t-vehicle-label',t.vehicle_label);s('t-car',t.car);s('t-options-label',t.options_label);
     s('t-ext',t.ext);s('t-int',t.int);s('t-full',t.full);
@@ -326,7 +329,7 @@
     el.classList.add('sel');
   }
   function clearForm(){
-    ['f-appart','f-email','f-description'].forEach(function(id){document.getElementById(id).value='';});
+    ['f-appart','f-name','f-email','f-description'].forEach(function(id){document.getElementById(id).value='';});
     ['f-date-autres'].forEach(function(id){document.getElementById(id).value='';});
     document.querySelectorAll('#days-lavage .slot-btn').forEach(function(b){b.classList.remove('sel');});
     document.querySelectorAll('.field-error').forEach(function(e){e.classList.remove('show');});
@@ -340,6 +343,7 @@
     var t=T[currentLang];
     var rows=[];
     if(data.apartment)rows.push([t.r_apt,data.apartment]);
+    if(data.name)rows.push([t.r_name,data.name]);
     if(data.email)rows.push([t.r_email,data.email]);
     if(data.service)rows.push([t.r_service,data.service]);
     if(data.vehicle)rows.push([t.r_vehicle,data.vehicle]);
@@ -366,7 +370,7 @@
     var emailVal=email.value.trim();
     if(!valid){document.getElementById('f-appart').scrollIntoView({behavior:'smooth',block:'center'});return;}
     var service=document.querySelector('.filter-btn.sel .filter-text')?document.querySelector('.filter-btn.sel .filter-text').textContent:'';
-    var data={apartment:getText('f-appart'),email:getText('f-email'),service:service,language:currentLang};
+    var data={apartment:getText('f-appart'),name:getText('f-name'),email:getText('f-email'),service:service,language:currentLang};
     if(currentService==='lavage'){
       var vEl=document.querySelector('#rg-vehicule .radio-option.selected .radio-text');
       var oEl=document.querySelector('#rg-options .radio-option.selected .radio-text');
