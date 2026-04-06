@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Service Request — Appartements Le Château</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1a73e8; --blue-light: #e8f0fe; --blue-text: #1a55b5;
+    --gold: #c9a84c; --gold-light: #fdf6e3;
+    --red: #e53935; --bg: #f5f3ef;
+    --surface: #ffffff; --border: rgba(0,0,0,0.10);
+    --text: #1a1a1a; --text-secondary: #6b6b6b;
+    --radius: 10px; --radius-lg: 16px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); min-height: 100vh; padding: 28px 16px 80px; color: var(--text); }
+  .page { max-width: 600px; margin: 0 auto; }
+  .lang-bar { display: flex; justify-content: flex-end; margin-bottom: 14px; }
+  .lang-toggle { display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow); }
+  .lang-opt { padding: 6px 18px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; background: transparent; color: var(--text-secondary); font-family: 'DM Sans', sans-serif; letter-spacing: 0.5px; transition: all 0.2s; }
+  .lang-opt.active { background: var(--text); color: #fff; }
+  .progress-wrap { background: var(--surface); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .progress-steps { display: flex; align-items: center; justify-content: space-between; position: relative; }
+  .progress-steps::before { content: ''; position: absolute; top: 14px; left: 14px; right: 14px; height: 2px; background: #e0e0e0; z-index: 0; }
+  .progress-line { position: absolute; top: 14px; left: 14px; height: 2px; background: var(--blue); z-index: 1; transition: width 0.4s ease; }
+  .step { display: flex; flex-direction: column; align-items: center; gap: 6px; z-index: 2; }
+  .step-dot { width: 28px; height: 28px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #999; transition: all 0.3s; }
+  .step-dot.done { background: var(--blue); color: #fff; }
+  .step-dot.active { background: var(--blue); color: #fff; box-shadow: 0 0 0 4px var(--blue-light); }
+  .step-label { font-size: 10px; font-weight: 500; color: #999; white-space: nowrap; }
+  .step-label.active { color: var(--blue); font-weight: 600; }
+  .step-label.done { color: var(--text-secondary); }
+  .form-header { background: linear-gradient(135deg, #1a3a6e 0%, #1a73e8 100%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; padding: 32px 28px 28px; position: relative; overflow: hidden; }
+  .form-header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+  .form-header::after { content: ''; position: absolute; bottom: -60px; left: -20px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,0.04); }
+  .header-tag { display: inline-block; background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 10px; }
+  .form-header h1 { color: #fff; font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.3px; position: relative; z-index: 1; }
+  .form-header p { color: rgba(255,255,255,0.75); font-size: 13px; line-height: 1.6; position: relative; z-index: 1; }
+  .header-bar { height: 4px; background: linear-gradient(90deg, var(--gold) 0%, #f0c040 100%); margin-bottom: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--border); padding: 22px 24px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .card:last-of-type { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+  .section-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 22px 24px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .section-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .section-title { font-size: 15px; font-weight: 600; color: var(--text); }
+  .section-desc { font-size: 12px; color: var(--text-secondary); margin-bottom: 0; line-height: 1.5; padding-left: 42px; }
+  .divider { height: 1px; background: #f0f0f0; margin: 16px 0; }
+  .field-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-secondary); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .req { color: var(--red); margin-left: 2px; }
+  .field-input { width: 100%; border: none; border-bottom: 2px solid #e8e8e8; padding: 10px 0; font-size: 15px; font-family: 'DM Sans', sans-serif; color: var(--text); background: transparent; outline: none; transition: border-color 0.2s; }
+  .field-input:focus { border-bottom-color: var(--blue); }
+  .field-input::placeholder { color: #c0c0c0; }
+  .field-date { width: 100%; border: 1.5px solid #e8e8e8; border-radius: var(--radius); padding: 11px 14px; font-size: 14px; font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--surface); outline: none; margin-top: 2px; transition: border-color 0.2s; }
+  .field-date:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-light); }
+  .filter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .filter-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 16px; border-radius: var(--radius-lg); border: 1.5px solid var(--border); cursor: pointer; background: var(--surface); user-select: none; transition: all 0.2s; }
+  .filter-btn:hover { border-color: var(--blue); background: #fafcff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,115,232,0.1); }
+  .filter-btn.sel { border-color: var(--blue); background: var(--blue-light); box-shadow: 0 4px 12px rgba(26,115,232,0.15); }
+  .filter-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .fi-wash { background: #deeafd; } .fi-plane { background: #fde8e6; } .fi-rdv { background: #e2f4e4; } .fi-other { background: #fef3d8; }
+  .filter-text { font-size: 14px; font-weight: 600; color: var(--text); }
+  .filter-sub { font-size: 11px; color: var(--text-secondary); }
+  .radio-group { display: flex; flex-direction: column; gap: 8px; }
+  .radio-option { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius); border: 1.5px solid #ececec; cursor: pointer; user-select: none; transition: all 0.15s; }
+  .radio-option:hover { border-color: var(--blue); background: #fafcff; }
+  .radio-option.selected { border-color: var(--blue); background: var(--blue-light); }
+  .radio-circle { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #c0c0c0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+  .radio-option.selected .radio-circle { border-color: var(--blue); }
+  .radio-option.selected .radio-circle::after { content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); display: block; }
+  .radio-text { font-size: 14px; color: var(--text); font-weight: 500; }
+  .day-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .slot-btn { padding: 12px 8px; border-radius: var(--radius); border: 1.5px solid #ececec; font-size: 13px; font-family: 'DM Sans', sans-serif; font-weight: 500; color: var(--text-secondary); background: var(--surface); cursor: pointer; text-align: center; transition: all 0.15s; }
+  .slot-btn:hover { border-color: var(--blue); color: var(--blue); background: #fafcff; }
+  .slot-btn.sel { border-color: var(--blue); background: var(--blue); color: #fff; font-weight: 600; }
+  .slot-note { font-size: 11px; color: var(--text-secondary); margin-top: 8px; display: block; }
+  .static-slot { display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: var(--radius); border: 1.5px solid var(--gold); background: var(--gold-light); font-size: 13px; font-weight: 600; color: #8a6a00; }
+  .btn-row { display: flex; justify-content: space-between; align-items: center; padding-top: 4px; }
+  .btn-clear { background: transparent; color: var(--text-secondary); border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 11px 20px; font-size: 14px; font-family: 'DM Sans', sans-serif; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+  .btn-clear:hover { border-color: var(--text-secondary); color: var(--text); }
+  .btn-submit { background: linear-gradient(135deg, #1a73e8, #1a55b5); color: #fff; border: none; border-radius: 10px; padding: 13px 32px; font-size: 15px; font-family: 'DM Sans', sans-serif; font-weight: 700; cursor: pointer; box-shadow: 0 4px 14px rgba(26,115,232,0.35); transition: all 0.2s; letter-spacing: 0.2px; }
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(26,115,232,0.4); }
+  .apt-badge { display: none; align-items: center; gap: 8px; background: var(--blue-light); border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; color: var(--blue-text); margin-bottom: 12px; }
+  .apt-badge.visible { display: inline-flex; }
+  .hidden { display: none !important; }
+  .success-screen { display: none; flex-direction: column; align-items: center; text-align: center; padding: 48px 28px 40px; background: var(--surface); border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+  .success-screen.visible { display: flex; }
+  .success-anim { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #e2f4e4, #c8eecb); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 36px; }
+  .success-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .success-screen p { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6; }
+  .recap-card { background: #f8f9ff; border: 1.5px solid var(--blue-light); border-radius: var(--radius-lg); padding: 18px 20px; width: 100%; text-align: left; margin-bottom: 24px; }
+  .recap-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--blue); margin-bottom: 12px; }
+  .recap-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; border-bottom: 1px solid #eef0f8; }
+  .recap-row:last-child { border-bottom: none; }
+  .recap-key { font-size: 12px; color: var(--text-secondary); }
+  .recap-val { font-size: 13px; font-weight: 600; color: var(--text); text-align: right; max-width: 60%; }
+  .field-error { font-size: 12px; color: var(--red); margin-top: 6px; display: none; }
+  .field-error.show { display: block; }
+  .input-error { border-bottom-color: var(--red) !important; }
+  @media (max-width: 480px) { .filter-grid { grid-template-columns: 1fr; } .btn-row { flex-direction: column; gap: 10px; } .btn-submit, .btn-clear { width: 100%; text-align: center; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="lang-bar">
+    <div class="lang-toggle">
+      <button type="button" class="lang-opt active" id="btn-en" onclick="setLang('en')">EN</button>
+      <button type="button" class="lang-opt" id="btn-fr" onclick="setLang('fr')">FR</button>
+    </div>
+  </div>
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-steps">
+      <div class="progress-line" id="progress-line" style="width:0%"></div>
+      <div class="step"><div class="step-dot active" id="step1-dot">1</div><span class="step-label active" id="step1-label">Apt.</span></div>
+      <div class="step"><div class="step-dot" id="step2-dot">2</div><span class="step-label" id="step2-label">Service</span></div>
+      <div class="step"><div class="step-dot" id="step3-dot">3</div><span class="step-label" id="step3-label">Details</span></div>
+      <div class="step"><div class="step-dot" id="step4-dot">4</div><span class="step-label" id="step4-label">Confirm</span></div>
+    </div>
+  </div>
+  <div class="form-header">
+
+    <h1 id="t-title">Le Château</h1>
+    <p id="t-subtitle">Submit your request and Quentin will confirm your time slot.</p>
+  </div>
+  <div class="header-bar"></div>
+  <div id="apt-badge" class="apt-badge"><span>🏠</span><span id="apt-badge-text">Apt. —</span></div>
+  <div id="main-form">
+    <div class="card">
+      <label class="field-label" id="t-appart-label">Apartment number <span class="req">*</span></label>
+      <input class="field-input" id="f-appart" type="text" placeholder="" oninput="onAppartInput()" />
+      <div class="field-error" id="err-appart">This field is required.</div>
+      <div class="divider"></div>
+      <label class="field-label" id="t-email-label">Email</label>
+      <input class="field-input" id="f-email" type="email" placeholder="your@email.com" />
+      <div class="field-error" id="err-email">A valid email is required.</div>
+    </div>
+    <div class="section-card">
+      <div class="section-header"><div class="section-icon">🏠</div><div><p class="section-title" id="t-service-title">What service do you need?</p></div></div>
+      <p class="section-desc" id="t-service-desc">Select a category to continue.</p>
+      <div class="divider"></div>
+      <div class="filter-grid">
+        <div class="filter-btn sel" data-service="lavage" onclick="selectService('lavage')"><div class="filter-icon fi-wash">🚗</div><div><div class="filter-text" id="t-wash">Car Wash</div><div class="filter-sub" id="t-wash-sub">Exterior / interior</div></div></div>
+        <div class="filter-btn" data-service="aeroport" onclick="selectService('aeroport')"><div class="filter-icon fi-plane">✈️</div><div><div class="filter-text" id="t-airport">Airport Transport</div><div class="filter-sub" id="t-airport-sub">Drop-off / pick-up</div></div></div>
+        <div class="filter-btn" data-service="rdv" onclick="selectService('rdv')"><div class="filter-icon fi-rdv">📍</div><div><div class="filter-text" id="t-rdv">Appointment Transport</div><div class="filter-sub" id="t-rdv-sub">General ride</div></div></div>
+        <div class="filter-btn" data-service="autres" onclick="selectService('autres')"><div class="filter-icon fi-other">⚡</div><div><div class="filter-text" id="t-other">Other Services</div><div class="filter-sub" id="t-other-sub">Any other request</div></div></div>
+      </div>
+    </div>
+    <div class="section-card" id="sec-lavage">
+      <div class="section-header"><div class="section-icon fi-wash">🚗</div><div><p class="section-title" id="t-wash-title">Car wash service</p></div></div>
+      <p class="section-desc" id="t-wash-desc">Select your vehicle type and options.</p>
+      <div class="divider"></div>
+      <label class="field-label" id="t-vehicle-label">Vehicle type</label>
+      <div class="radio-group" id="rg-vehicule">
+        <div class="radio-option selected" onclick="selectRadio('rg-vehicule',this)"><div class="radio-circle"></div><span class="radio-text" id="t-car">Car</span></div>
+        <div class="radio-option" onclick="selectRadio('rg-vehicule',this)"><div class="radio-circle"></div><span class="radio-text">SUV</span></div>
+      </div>
+      <div class="divider"></div>
+      <label class="field-label" id="t-options-label">Options</label>
+      <div class="radio-group" id="rg-options">
+        <div class="radio-option selected" onclick="selectRadio('rg-options',this)"><div class="radio-circle"></div><span class="radio-text" id="t-ext">Exterior wash</span></div>
+        <div class="radio-option" onclick="selectRadio('rg-options',this)"><div class="radio-circle"></div><span class="radio-text" id="t-int">Interior cleaning</span></div>
+        <div class="radio-option" onclick="selectRadio('rg-options',this)"><div class="radio-circle"></div><span class="radio-text" id="t-full">Full — Interior + Exterior</span></div>
+      </div>
+    </div>
+    <div class="section-card hidden" id="sec-aeroport">
+      <div class="section-header"><div class="section-icon fi-plane">✈️</div><div><p class="section-title" id="t-airport-title">Airport transport</p></div></div>
+      <p class="section-desc" id="t-airport-desc">Direction, date and time.</p>
+      <div class="divider"></div>
+      <div class="radio-group" id="rg-aeroport">
+        <div class="radio-option selected" onclick="selectRadio('rg-aeroport',this)"><div class="radio-circle"></div><span class="radio-text" id="t-dropoff">Drop-off (departure)</span></div>
+        <div class="radio-option" onclick="selectRadio('rg-aeroport',this)"><div class="radio-circle"></div><span class="radio-text" id="t-pickup">Pick-up (arrival)</span></div>
+      </div>
+      <div class="divider"></div>
+      <label class="field-label" id="t-date-label">Date <span class="req">*</span></label>
+      <input class="field-date" id="f-date-aeroport" type="date" />
+      <div class="divider"></div>
+      <label class="field-label" id="t-time-label">Preferred time</label>
+      <input class="field-input" id="f-heure-aeroport" type="text" placeholder="e.g. 6:00 AM" />
+    </div>
+    <div class="section-card hidden" id="sec-rdv">
+      <div class="section-header"><div class="section-icon fi-rdv">📍</div><div><p class="section-title" id="t-rdv-title">Appointment transport</p></div></div>
+      <p class="section-desc" id="t-rdv-desc">Date, time and destination.</p>
+      <div class="divider"></div>
+      <label class="field-label" id="t-rdv-date-label">Date <span class="req">*</span></label>
+      <input class="field-date" id="f-date-rdv" type="date" />
+      <div class="divider"></div>
+      <label class="field-label" id="t-rdv-time-label">Preferred time</label>
+      <input class="field-input" id="f-heure" type="text" placeholder="e.g. 10:00 AM" />
+    </div>
+    <div class="section-card hidden" id="sec-autres">
+      <div class="section-header"><div class="section-icon fi-other">⚡</div><div><p class="section-title" id="t-other-title">Other services</p></div></div>
+      <p class="section-desc" id="t-other-desc">Describe your request.</p>
+      <div class="divider"></div>
+      <label class="field-label" id="t-other-date-label">Date <span class="req">*</span></label>
+      <input class="field-date" id="f-date-autres" type="date" />
+      <div class="divider"></div>
+      <label class="field-label" id="t-desc-label">Request description <span class="req">*</span></label>
+      <input class="field-input" id="f-description" type="text" placeholder="e.g. Package delivery..." />
+    </div>
+    <div class="section-card" id="dispo-lavage">
+      <div class="section-header"><div class="section-icon" style="background:#fff3e0">📅</div><div><p class="section-title" id="t-avail-title">Preferred availability</p></div></div>
+      <p class="section-desc" id="t-avail-desc">Tuesday, Wednesday and Thursday mornings only.</p>
+      <div class="divider"></div>
+      <label class="field-label" id="t-day-label">Preferred day</label>
+      <div class="day-grid-3" id="days-lavage">
+        <button type="button" class="slot-btn" id="t-tuesday" onclick="selectDay(this)">Tuesday</button>
+        <button type="button" class="slot-btn" id="t-wednesday" onclick="selectDay(this)">Wednesday</button>
+        <button type="button" class="slot-btn" id="t-thursday" onclick="selectDay(this)">Thursday</button>
+      </div>
+      <div style="margin-top:14px;">
+        <label class="field-label" id="t-slot-label">Time slot</label>
+        <div class="static-slot" id="t-slot-val">Morning (7 AM – 12 PM)</div>
+
+      </div>
+    </div>
+    <div class="card" style="border-radius:0 0 16px 16px;">
+      <div class="btn-row">
+        <button type="button" class="btn-clear" id="t-clear" onclick="clearForm()">Clear form</button>
+        <button type="button" class="btn-submit" id="t-submit" onclick="submitForm()">Submit request →</button>
+      </div>
+    </div>
+  </div>
+  <div class="success-screen" id="success-screen">
+    <div class="success-anim">✅</div>
+    <h2 id="t-success-title">Request submitted!</h2>
+    <p id="t-success-msg">Quentin will contact you shortly to confirm.</p>
+    <div class="recap-card" id="recap-card">
+      <div class="recap-title" id="t-recap-title">Your request</div>
+      <div id="recap-rows"></div>
+    </div>
+    <button type="button" class="btn-submit" id="t-new" onclick="resetForm()">New request</button>
+  </div>
+</div>
+<script>
+  var currentService='lavage', currentLang='en';
+  var SCRIPT_URL='https://formspree.io/f/xeeppynz';
+  var T={
+    en:{
+      tag:'Resident Services',title:'Le Château',subtitle:'Submit your request and Quentin will confirm your time slot.',
+      step1:'Apt.',step2:'Service',step3:'Details',step4:'Confirm',
+      appart:'Apartment number',appart_err:'This field is required.',appart_ph:'',
+      email:'Email',email_err:'A valid email is required.',email_ph:'your@email.com',
+      service_title:'What service do you need?',service_desc:'Select a category to continue.',
+      wash:'Car Wash',wash_sub:'Exterior / interior',airport:'Airport Transport',airport_sub:'Drop-off / pick-up',
+      rdv:'Appointment Transport',rdv_sub:'General ride',other:'Other Services',other_sub:'Any other request',
+      wash_title:'Car wash service',wash_desc:'Select your vehicle type and options.',
+      vehicle_label:'Vehicle type',car:'Car',options_label:'Options',
+      ext:'Exterior wash',int:'Interior cleaning',full:'Full — Interior + Exterior',
+      airport_title:'Airport transport',airport_desc:'Direction, date and time.',
+      dropoff:'Drop-off (departure)',pickup:'Pick-up (arrival)',roundtrip:'Round trip',
+      date_label:'Date',time_label:'Preferred time',time_ph:'e.g. 6:00 AM',
+      rdv_title:'Appointment transport',rdv_desc:'Date, time and destination.',
+      rdv_date:'Date',rdv_time:'Preferred time',rdv_time_ph:'e.g. 10:00 AM',dest:'Destination',dest_ph:'e.g. Medical clinic',
+      other_title:'Other services',other_desc:'Describe your request.',
+      other_date:'Date',desc_label:'Request description',desc_ph:'e.g. Package delivery...',
+      avail_title:'Preferred availability',avail_desc:'Tuesday, Wednesday and Thursday mornings only.',
+      day_label:'Preferred day',tuesday:'Tuesday',wednesday:'Wednesday',thursday:'Thursday',
+      slot_label:'Time slot',slot_val:'Morning (7 AM – 12 PM)',slot_note:'Only available time slot',
+      clear:'Clear form',submit:'Submit request →',
+      success_title:'Request submitted!',success_msg:'Quentin will contact you shortly to confirm.',
+      recap_title:'Your request',new_req:'New request',
+      r_apt:'Apartment',r_email:'Email',r_service:'Service',r_vehicle:'Vehicle',r_options:'Options',
+      r_day:'Day',r_slot:'Time slot',r_direction:'Direction',r_date:'Date',
+      r_time:'Time',r_dest:'Destination',r_desc:'Description'
+    },
+    fr:{
+      tag:'Services Résidents',title:'Le Château',subtitle:'Soumettez votre demande et Quentin confirmera votre créneau.',
+      step1:'Apt.',step2:'Service',step3:'Détails',step4:'Confirm.',
+      appart:'Numéro d\'appartement',appart_err:'Ce champ est requis.',appart_ph:'',
+      email:'Courriel',email_err:'Un courriel valide est requis.',email_ph:'votre@email.com',
+      service_title:'Quel service souhaitez-vous ?',service_desc:'Sélectionnez une catégorie.',
+      wash:'Lavage auto',wash_sub:'Extérieur / intérieur',airport:'Transport aéroport',airport_sub:'Dépose / récupération',
+      rdv:'Transport rendez-vous',rdv_sub:'Course générale',other:'Autres services',other_sub:'Toute autre demande',
+      wash_title:'Service de lavage',wash_desc:'Type de véhicule et options.',
+      vehicle_label:'Type de véhicule',car:'Voiture',options_label:'Options',
+      ext:'Lavage extérieur',int:'Nettoyage intérieur',full:'Complet — Intérieur + Extérieur',
+      airport_title:'Transport aéroport',airport_desc:'Direction, date et heure.',
+      dropoff:'Dépose (départ)',pickup:'Récupération (arrivée)',roundtrip:'Aller-retour',
+      date_label:'Date',time_label:'Heure préférée',time_ph:'ex. 6h00',
+      rdv_title:'Transport rendez-vous',rdv_desc:'Date, heure et destination.',
+      rdv_date:'Date',rdv_time:'Heure préférée',rdv_time_ph:'ex. 10h00',dest:'Destination',dest_ph:'ex. Clinique médicale',
+      other_title:'Autres services',other_desc:'Décrivez votre demande.',
+      other_date:'Date',desc_label:'Description',desc_ph:'ex. Livraison de colis...',
+      avail_title:'Disponibilités souhaitées',avail_desc:'Mardi, mercredi et jeudi matin seulement.',
+      day_label:'Jour préféré',tuesday:'Mardi',wednesday:'Mercredi',thursday:'Jeudi',
+      slot_label:'Plage horaire',slot_val:'Matin (7h – 12h)',slot_note:'Seul créneau disponible',
+      clear:'Effacer',submit:'Envoyer la demande →',
+      success_title:'Demande envoyée !',success_msg:'Quentin vous contactera sous peu pour confirmer.',
+      recap_title:'Votre demande',new_req:'Nouvelle demande',
+      r_apt:'Appartement',r_email:'Courriel',r_service:'Service',r_vehicle:'Véhicule',r_options:'Options',
+      r_day:'Jour',r_slot:'Créneau',r_direction:'Direction',r_date:'Date',
+      r_time:'Heure',r_dest:'Destination',r_desc:'Description'
+    }
+  };
+  function setLang(lang){
+    currentLang=lang;
+    document.getElementById('btn-en').classList.toggle('active',lang==='en');
+    document.getElementById('btn-fr').classList.toggle('active',lang==='fr');
+    var t=T[lang];
+    function s(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+    function sh(id,v){var e=document.getElementById(id);if(e)e.innerHTML=v;}
+    function sp(id,v){var e=document.getElementById(id);if(e)e.placeholder=v;}
+    s('t-tag',t.tag);s('t-title',t.title);s('t-subtitle',t.subtitle);
+    s('step1-label',t.step1);s('step2-label',t.step2);s('step3-label',t.step3);s('step4-label',t.step4);
+    sh('t-appart-label',t.appart+' <span class="req">*</span>');sp('f-appart',t.appart_ph);s('err-appart',t.appart_err);
+    sh('t-email-label',t.email);sp('f-email',t.email_ph);s('err-email',t.email_err);
+    s('t-service-title',t.service_title);s('t-service-desc',t.service_desc);
+    s('t-wash',t.wash);s('t-wash-sub',t.wash_sub);s('t-airport',t.airport);s('t-airport-sub',t.airport_sub);
+    s('t-rdv',t.rdv);s('t-rdv-sub',t.rdv_sub);s('t-other',t.other);s('t-other-sub',t.other_sub);
+    s('t-wash-title',t.wash_title);s('t-wash-desc',t.wash_desc);
+    s('t-vehicle-label',t.vehicle_label);s('t-car',t.car);s('t-options-label',t.options_label);
+    s('t-ext',t.ext);s('t-int',t.int);s('t-full',t.full);
+    s('t-airport-title',t.airport_title);s('t-airport-desc',t.airport_desc);
+    s('t-dropoff',t.dropoff);s('t-pickup',t.pickup);s('t-roundtrip',t.roundtrip);
+    sh('t-date-label',t.date_label+' <span class="req">*</span>');s('t-time-label',t.time_label);sp('f-heure-aeroport',t.time_ph);
+    s('t-rdv-title',t.rdv_title);s('t-rdv-desc',t.rdv_desc);
+    sh('t-rdv-date-label',t.rdv_date+' <span class="req">*</span>');s('t-rdv-time-label',t.rdv_time);sp('f-heure',t.rdv_time_ph);
+    s('t-dest-label',t.dest);sp('f-destination',t.dest_ph);
+    s('t-other-title',t.other_title);s('t-other-desc',t.other_desc);
+    sh('t-other-date-label',t.other_date+' <span class="req">*</span>');s('t-desc-label',t.desc_label);sp('f-description',t.desc_ph);
+    s('t-avail-title',t.avail_title);s('t-avail-desc',t.avail_desc);
+    s('t-day-label',t.day_label);s('t-tuesday',t.tuesday);s('t-wednesday',t.wednesday);s('t-thursday',t.thursday);
+    s('t-slot-label',t.slot_label);s('t-slot-val',t.slot_val);s('t-slot-note',t.slot_note);
+    s('t-clear',t.clear);s('t-submit',t.submit);
+    s('t-success-title',t.success_title);s('t-success-msg',t.success_msg);
+    s('t-recap-title',t.recap_title);s('t-new',t.new_req);
+  }
+  function updateProgress(step){
+    var pct=['0%','33%','66%','100%'];
+    document.getElementById('progress-line').style.width=pct[step-1]||'0%';
+    for(var i=1;i<=4;i++){
+      var dot=document.getElementById('step'+i+'-dot');
+      var lbl=document.getElementById('step'+i+'-label');
+      dot.className='step-dot'+(i<step?' done':i===step?' active':'');
+      lbl.className='step-label'+(i<step?' done':i===step?' active':'');
+      dot.textContent=i<step?'✓':i;
+    }
+  }
+  function onAppartInput(){
+    var val=document.getElementById('f-appart').value.trim();
+    var badge=document.getElementById('apt-badge');
+    if(val){badge.classList.add('visible');document.getElementById('apt-badge-text').textContent='Apt. '+val;updateProgress(2);}
+    else{badge.classList.remove('visible');updateProgress(1);}
+  }
+  function selectService(type){
+    currentService=type;
+    document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('sel');});
+    document.querySelector('[data-service="'+type+'"]').classList.add('sel');
+    ['lavage','aeroport','rdv','autres'].forEach(function(s){document.getElementById('sec-'+s).classList.toggle('hidden',s!==type);});
+    document.getElementById('dispo-lavage').classList.toggle('hidden',type!=='lavage');
+    updateProgress(3);
+  }
+  function selectRadio(groupId,el){
+    document.querySelectorAll('#'+groupId+' .radio-option').forEach(function(o){o.classList.remove('selected');});
+    el.classList.add('selected');
+  }
+  function selectDay(el){
+    document.querySelectorAll('#days-lavage .slot-btn').forEach(function(b){b.classList.remove('sel');});
+    el.classList.add('sel');
+  }
+  function clearForm(){
+    ['f-appart','f-email','f-heure-aeroport','f-heure','f-description'].forEach(function(id){document.getElementById(id).value='';});
+    ['f-date-aeroport','f-date-rdv','f-date-autres'].forEach(function(id){document.getElementById(id).value='';});
+    document.querySelectorAll('#days-lavage .slot-btn').forEach(function(b){b.classList.remove('sel');});
+    document.querySelectorAll('.field-error').forEach(function(e){e.classList.remove('show');});
+    document.querySelectorAll('.field-input').forEach(function(i){i.classList.remove('input-error');});
+    document.getElementById('apt-badge').classList.remove('visible');
+    updateProgress(1);
+    selectService('lavage');
+  }
+  function getText(id){var el=document.getElementById(id);return el?el.value:'';}
+  function buildRecap(data){
+    var t=T[currentLang];
+    var rows=[];
+    if(data.apartment)rows.push([t.r_apt,data.apartment]);
+    if(data.email)rows.push([t.r_email,data.email]);
+    if(data.service)rows.push([t.r_service,data.service]);
+    if(data.vehicle)rows.push([t.r_vehicle,data.vehicle]);
+    if(data.options)rows.push([t.r_options,data.options]);
+    if(data.preferred_day)rows.push([t.r_day,data.preferred_day]);
+    if(data.time_slot)rows.push([t.r_slot,data.time_slot]);
+    if(data.direction)rows.push([t.r_direction,data.direction]);
+    if(data.date)rows.push([t.r_date,data.date]);
+    if(data.preferred_time)rows.push([t.r_time,data.preferred_time]);
+    if(data.destination)rows.push([t.r_dest,data.destination]);
+    if(data.description)rows.push([t.r_desc,data.description]);
+    document.getElementById('recap-rows').innerHTML=rows.map(function(r){
+      return '<div class="recap-row"><span class="recap-key">'+r[0]+'</span><span class="recap-val">'+r[1]+'</span></div>';
+    }).join('');
+  }
+  function submitForm(){
+    var valid=true;
+    var appart=document.getElementById('f-appart');
+    var errAppart=document.getElementById('err-appart');
+    if(!appart.value.trim()){appart.classList.add('input-error');errAppart.classList.add('show');valid=false;}
+    else{appart.classList.remove('input-error');errAppart.classList.remove('show');}
+    var email=document.getElementById('f-email');
+    var errEmail=document.getElementById('err-email');
+    var emailVal=email.value.trim();
+    if(!valid){document.getElementById('f-appart').scrollIntoView({behavior:'smooth',block:'center'});return;}
+    var service=document.querySelector('.filter-btn.sel .filter-text')?document.querySelector('.filter-btn.sel .filter-text').textContent:'';
+    var data={apartment:getText('f-appart'),email:getText('f-email'),service:service,language:currentLang};
+    if(currentService==='lavage'){
+      var vEl=document.querySelector('#rg-vehicule .radio-option.selected .radio-text');
+      var oEl=document.querySelector('#rg-options .radio-option.selected .radio-text');
+      var dEl=document.querySelector('#days-lavage .slot-btn.sel');
+      data.vehicle=vEl?vEl.textContent:'';data.options=oEl?oEl.textContent:'';
+      data.preferred_day=dEl?dEl.textContent:'';data.time_slot='Morning (7 AM - 12 PM)';
+    } else if(currentService==='aeroport'){
+      var dirEl=document.querySelector('#rg-aeroport .radio-option.selected .radio-text');
+      data.direction=dirEl?dirEl.textContent:'';data.date=getText('f-date-aeroport');data.preferred_time=getText('f-heure-aeroport');
+    } else if(currentService==='rdv'){
+      data.date=getText('f-date-rdv');data.preferred_time=getText('f-heure');
+    } else if(currentService==='autres'){
+      data.date=getText('f-date-autres');data.description=getText('f-description');
+    }
+    updateProgress(4);
+    buildRecap(data);
+    document.getElementById('progress-wrap').style.display='none';
+    document.getElementById('apt-badge').classList.remove('visible');
+    document.getElementById('main-form').style.display='none';
+    document.getElementById('success-screen').classList.add('visible');
+    window.scrollTo({top:0,behavior:'smooth'});
+    fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).catch(function(){});
+  }
+  function resetForm(){
+    clearForm();
+    document.getElementById('progress-wrap').style.display='';
+    document.getElementById('main-form').style.display='';
+    document.getElementById('success-screen').classList.remove('visible');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+</script>
+</body>
+</html>
